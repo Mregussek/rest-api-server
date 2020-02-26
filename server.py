@@ -4,11 +4,22 @@ from flask import Flask
 from flask_restful import Resource, reqparse ,Api
 import json
 
+
 TGS = Flask(__name__)
 api = Api(TGS)
 
+
 class BooksApi(Resource):
+    """
+    Class, which we need for creating API endpoints and the required REST methods
+
+    Attributes:
+        books(list): containts the whole data of JSON file
+    """
     def __init__(self):
+        """
+        Reads content of JSON file and save it to books variable
+        """
         with open('books.json') as f:
             json_data = json.load(f)
 
@@ -16,6 +27,10 @@ class BooksApi(Resource):
 
 
     def get(self, id):
+        """
+        Searches requested id in list of books, and will return the data if found along with 
+        response code 200 OK. Otherwise 404 not found
+        """
         for book in self.books:
             if(id == book["id"]):
                 return book, 200
@@ -23,6 +38,10 @@ class BooksApi(Resource):
 
 
     def post(self, id):
+        """
+        Inserts new book data in list of books and returns inserted data with response code 201 created. 
+        If record already exists it returns error code 400 bad request.
+        """
         parser = reqparse.RequestParser()
         parser.add_argument("language")
         parser.add_argument("edition")
@@ -45,6 +64,10 @@ class BooksApi(Resource):
 
 
     def put(self, id):
+        """
+        Overwrites record and returns data along with response code 200 OK. If record does not exist, 
+        it creates the data and returns it with response code 201 created.
+        """
         parser = reqparse.RequestParser()
         parser.add_argument("language")
         parser.add_argument("edition")
@@ -70,6 +93,10 @@ class BooksApi(Resource):
 
     
     def delete(self, id):
+        """
+        Deletes the record if exist and returns the data with response code 200 OK. 
+        Otherwise 404 not found.
+        """
         self.books = [book for book in self.books if book["id"] != id]
         return "{} is deleted.".format(id), 200
 
