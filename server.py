@@ -20,7 +20,7 @@ class BooksApi(Resource):
         """
         Reads content of JSON file and save it to books variable
         """
-        with open('books.json') as f:
+        with open('books.json', 'r') as f:
             json_data = json.load(f)
 
         self.books = json_data["books"]
@@ -34,6 +34,7 @@ class BooksApi(Resource):
         for book in self.books:
             if(id == book["id"]):
                 return book, 200
+
         return "Book not found", 404
 
 
@@ -43,7 +44,7 @@ class BooksApi(Resource):
         If record already exists it returns error code 400 bad request.
         """
         parser = reqparse.RequestParser()
-        parser.add_argument("language")
+        parser.add_argument("title")
         parser.add_argument("edition")
         parser.add_argument("author")
         args = parser.parse_args()
@@ -54,12 +55,13 @@ class BooksApi(Resource):
 
         book = {
             "id": id,
-            "language": args["language"],
+            "title": args["title"],
             "edition": args["edition"],
             "author": args["author"]
         }
 
         self.books.append(book)
+        #self.rewrite()
         return book, 201
 
 
@@ -69,26 +71,27 @@ class BooksApi(Resource):
         it creates the data and returns it with response code 201 created.
         """
         parser = reqparse.RequestParser()
-        parser.add_argument("language")
+        parser.add_argument("title")
         parser.add_argument("edition")
         parser.add_argument("author")
         args = parser.parse_args()
 
         for book in self.books:
             if(id == book["id"]):
-                book["language"] = args["language"]
+                book["title"] = args["title"]
                 book["edition"] = args["edition"]
                 book["author"] = args["author"]
                 return book, 200
 
         book = {
             "id": id,
-            "language": args["language"],
+            "title": args["title"],
             "edition": args["edition"],
             "author": args["author"]
         }
 
         self.books.append(book)
+        #self.rewrite()
         return book, 201
 
     
@@ -98,8 +101,21 @@ class BooksApi(Resource):
         Otherwise 404 not found.
         """
         self.books = [book for book in self.books if book["id"] != id]
+        #self.rewrite()
         return "{} is deleted.".format(id), 200
 
-api.add_resource(BooksApi, "/id/<string:id>")
+
+    def rewrite(self):
+        """
+        Writing changes to JSON file in order to save what we have accomplished during session.
+        """
+        with open("books.json", "w") as f:
+            f.seek(0)
+            data = '{ "books": ' + self.books + '}'
+            json.dump(data, f)
+            f.truncate()
+
+
+api.add_resource(BooksApi, "/books/<string:id>")
 
 TGS.run(debug=True, port=8080)
