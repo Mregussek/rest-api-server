@@ -14,4 +14,4 @@ if __name__ == "__main__":
     api.add_resource(BooksListAPI, "/books", endpoint="books")
     api.add_resource(BooksAPI, "/books/<string:id>", endpoint="book")
 
-    rest_app.run(debug=True, port=8080)
+    rest_app.run(host='0.0.0.0', debug=True, port=8080)

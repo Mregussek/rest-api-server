@@ -24,7 +24,17 @@ self.parser.add_argument("author", type=str, required=True,
 
 One interesting aspect of the *RequestParser* class is that by default it looks for fields in request.values, so the location optional argument must be set to indicate that the fields are coming in *request.json*.
 
+Thankfully to this line user is able to run server on docker container:
+
+```python
+rest_app.run(host='0.0.0.0', debug=True, port=8080)
+```
+
+*host='0.0.0.0'* it makes app to run on all your machines IP addresses. By default it runs on localhost and you are not allowed to request anything.
+
 ## Usage
+
+### Python 
 
 Install requirenmnents for this project:
 
@@ -52,6 +62,20 @@ python server.py
  * Debugger is active!
  * Debugger PIN: 119-369-464
  ```
+
+### Docker
+
+For this I have prepared *Dockerfile*. Firstly you have to build application:
+
+```bash
+sudo docker build server .
+```
+
+and then run it:
+
+```bash
+sudo docker run -p 8080:8080 server
+```
 
  ## REST API requests
 
