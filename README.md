@@ -11,9 +11,11 @@ api.add_resource(BooksListAPI, "/books", endpoint="books")
 api.add_resource(BooksAPI, "/books/<string:id>", endpoint="book")
 ```
 
-In the BooksListAPI resource the POST method is the only one the receives arguments. The title and author arguments are required here, so I included an error message that Flask-RESTful will send as a response to the client when the field is missing.
+In the BooksListAPI resource the POST method is the only one the receives arguments. The id, title and author arguments are required here, so I included an error message that Flask-RESTful will send as a response to the client when the field is missing.
 
 ```python
+self.parser.add_argument("id", type=str, required=True,
+                            help='No book id provided', location='json')
 self.parser.add_argument("title", type=str, required=True,
                             help='No book title provided', location='json')
 self.parser.add_argument("edition", type=str, default='Not given',
@@ -30,13 +32,13 @@ Thankfully to this line user is able to run server on docker container:
 rest_app.run(host='0.0.0.0', debug=True, port=8080)
 ```
 
-*host='0.0.0.0'* it makes app to run on all your machines IP addresses. By default it runs on localhost and you are not allowed to request anything.
+*host='0.0.0.0'* makes app to run on all your machines IP addresses. By default it runs on localhost and you are not allowed to request anything.
 
 ## Usage
 
 ### Python 
 
-Install requirenmnents for this project:
+Install requirements for this project:
 
 ```bash
 pip3 install -r requirements.txt

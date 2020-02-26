@@ -1,3 +1,5 @@
+# Written by Mateusz Rzeczyca
+
 FROM python:3
 
 RUN mkdir -p /usr/src/app
