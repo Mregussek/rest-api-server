@@ -25,6 +25,8 @@ class BooksListAPI(Resource):
         self.books = json_data["books"]
 
         self.parser = reqparse.RequestParser()
+        self.parser.add_argument("id", type=str, required=True,
+                                 help='No book id provided', location='json')
         self.parser.add_argument("title", type=str, required=True,
                                  help='No book title provided', location='json')
         self.parser.add_argument("edition", type=str, default='Not given',

@@ -69,7 +69,7 @@ curl -XGET http://127.0.0.1:8080/books
 curl -XGET http://127.0.0.1:8080/books/02
  ```
 
- Also POST method:
+Also POST method:
 
  ```bash
 curl -XPOST http://127.0.0.1:8080/books -H "Content-Type: application/json"  --data '{ "id": "04", "title": "New Book", "author": "Mateusz Rzeczyca" }'
