@@ -6,15 +6,17 @@ import json
 
 class BooksAPI(Resource):
     """
-    Class, which we need for creating API endpoints and the required REST methods
+    Class, which we need for creating API endpoint and the required REST methods
+    Used for /books/<given id> URL.
 
     Attributes:
         books(list): contains the whole data of JSON file
+        parser(flask_restful.reqparse.RequestParser): handles requests
     """
 
     def __init__(self):
         """
-        Reads content of JSON file and save it to books variable and prepares
+        Reads content of JSON file and save it to books variable, prepares
         object for handling requests
         """
         with open('books.json', 'r') as f:
@@ -24,7 +26,7 @@ class BooksAPI(Resource):
 
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("title", type=str, location='json')
-        self.parser.add_argument("edition", type=str, location='json')
+        self.parser.add_argument("edition", type=str, default='Not given', location='json')
         self.parser.add_argument("author", type=str, location='json')
 
     def get(self, id):

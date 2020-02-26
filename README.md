@@ -23,3 +23,64 @@ self.parser.add_argument("author", type=str, required=True,
 ```
 
 One interesting aspect of the *RequestParser* class is that by default it looks for fields in request.values, so the location optional argument must be set to indicate that the fields are coming in *request.json*.
+
+## Usage
+
+Install requirenmnents for this project:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+and run server:
+
+```bash
+python server.py
+```
+
+You should get sth like this:
+
+```bash
+python server.py
+ * Serving Flask app "server" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://127.0.0.1:8080/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 119-369-464
+ ```
+
+ ## REST API requests
+
+ I am using Postman for this, but there is another way to do this. You need to install curl:
+
+ ```bash
+sudo apt install curl
+ ```
+
+ and for instance GET request:
+
+ ```bash
+curl -XGET http://127.0.0.1:8080/books
+
+curl -XGET http://127.0.0.1:8080/books/02
+ ```
+
+ Also POST method:
+
+ ```bash
+curl -XPOST http://127.0.0.1:8080/books -H "Content-Type: application/json"  --data '{ "id": "04", "title": "New Book", "author": "Mateusz Rzeczyca" }'
+```
+
+## Author
+
+Mateusz Rzeczyca
+
+[info@mateuszrzeczyca.pl](mailto:info@mateuszrzeczyca.pl)
+
+Cracow, Poland
+
+26.02.2020
