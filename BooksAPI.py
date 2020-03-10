@@ -19,8 +19,6 @@ class BooksAPI(Resource):
         Reads content of JSON file and save it to books variable, prepares
         object for handling requests
         """
-        with open('books.json', 'r') as f:
-            json_data = json.load(f)
 
         self.books = json_data["books"]
 

@@ -1,20 +1,17 @@
 {
     "books": [
-     
        {
           "id": "01",
           "language": "A Tour of C++",
           "edition": "second",
           "author": "Byarne Stroustrup"
        },
-     
        {
           "id": "02",
           "language": "Python3",
           "edition": "first",
           "author": "Zed E. Shaw"
        },
-
        {
            "id": "03",
            "language": "Design Patterns",
