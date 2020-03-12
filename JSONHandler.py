@@ -41,6 +41,7 @@ class JSONHandler(object):
         try:
             books = [book for book in self.get_books_list() if book["id"] != id]
             self.books = books
+            self.json_data = {'books': self.books}
 
             return True
         except:

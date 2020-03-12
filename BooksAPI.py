@@ -22,7 +22,6 @@ class BooksAPI(Resource):
 
         self.file_name = 'books.json'
         self.json_handler = JSONHandler()
-        self.json_data = self.json_handler.read_json(self.file_name)
 
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("title", type=str, location='json')
@@ -34,6 +33,8 @@ class BooksAPI(Resource):
         Searches requested id in list of books, and will return the data if found along with 
         response code 200 OK. Otherwise 404 not found
         """
+        self.json_handler.read_json(self.file_name)
+
         for book in self.json_handler.get_books_list():
             if id == book["id"]:
                 return book, 200
@@ -45,6 +46,7 @@ class BooksAPI(Resource):
         Inserts new book data in list of books and returns inserted data with response code 201 created. 
         If record already exists it returns error code 400 bad request.
         """
+        self.json_handler.read_json(self.file_name)
         args = self.parser.parse_args()
 
         for book in self.json_handler.get_books_list():
@@ -67,6 +69,7 @@ class BooksAPI(Resource):
         Overwrites record and returns data along with response code 200 OK. If record does not exist, 
         it creates the data and returns it with response code 201 created.
         """
+        self.json_handler.read_json(self.file_name)
         args = self.parser.parse_args()
 
         for book in self.json_handler.get_books_list():
@@ -92,6 +95,8 @@ class BooksAPI(Resource):
         Deletes the record if exist and returns the data with response code 200 OK. 
         Otherwise 404 not found.
         """
+        self.json_handler.read_json(self.file_name)
+
         try:
             self.json_handler.get_books_list().index(id)
             self.json_handler.delete_element(id)
