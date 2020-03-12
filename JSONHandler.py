@@ -4,9 +4,9 @@ import json
 class JSONHandler(object):
     def __init__(self, json_data=None):
         if json_data is not None:
-            self.starting_books = json_data['books']
+            self.books = json_data['books']
         else:
-            self.starting_books = None
+            self.books = None
 
         self.json_data = json_data
 
@@ -16,21 +16,31 @@ class JSONHandler(object):
 
         return self.json_data
 
+    def write_json(self, file_name):
+        try:
+            with open(file_name, 'w') as f:
+                json.dump(self.json_data, f)
+
+            return True
+        except:
+            return False
+
     def get_books_list(self):
         return self.json_data['books']
 
     def append_new_element(self, new_book):
         try:
-            self.starting_books.append(new_book)
-            self.json_data = {'books': self.starting_books}
+            self.books.append(new_book)
+            self.json_data = {'books': self.books}
+
             return True
         except:
             return False
 
-    def write_json(self, file_name):
+    def delete_element(self, id):
         try:
-            with open(file_name, 'w') as f:
-                json.dump(self.json_data, f)
+            books = [book for book in self.get_books_list() if book["id"] != id]
+            self.books = books
 
             return True
         except:

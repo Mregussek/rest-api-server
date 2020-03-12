@@ -1,7 +1,7 @@
 # Written by Mateusz Rzeczyca
 
 from flask_restful import Resource, reqparse
-import json
+from JSONHandler import JSONHandler
 
 
 class BooksAPI(Resource):
@@ -20,7 +20,9 @@ class BooksAPI(Resource):
         object for handling requests
         """
 
-        self.books = json_data["books"]
+        self.file_name = 'books.json'
+        self.json_handler = JSONHandler()
+        self.json_data = self.json_handler.read_json(self.file_name)
 
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("title", type=str, location='json')
@@ -32,7 +34,7 @@ class BooksAPI(Resource):
         Searches requested id in list of books, and will return the data if found along with 
         response code 200 OK. Otherwise 404 not found
         """
-        for book in self.books:
+        for book in self.json_handler.get_books_list():
             if id == book["id"]:
                 return book, 200
 
@@ -45,7 +47,7 @@ class BooksAPI(Resource):
         """
         args = self.parser.parse_args()
 
-        for book in self.books:
+        for book in self.json_handler.get_books_list():
             if id == book["id"]:
                 return "Id {} already exists".format(id), 400
 
@@ -56,7 +58,8 @@ class BooksAPI(Resource):
             "author": args["author"]
         }
 
-        self.books.append(book)
+        self.json_handler.append_new_element(book)
+        self.json_handler.write_json(self.file_name)
         return book, 201
 
     def put(self, id):
@@ -66,7 +69,7 @@ class BooksAPI(Resource):
         """
         args = self.parser.parse_args()
 
-        for book in self.books:
+        for book in self.json_handler.get_books_list():
             if id == book["id"]:
                 book["title"] = args["title"]
                 book["edition"] = args["edition"]
@@ -80,7 +83,8 @@ class BooksAPI(Resource):
             "author": args["author"]
         }
 
-        self.books.append(book)
+        self.json_handler.append_new_element(book)
+        self.json_handler.write_json(self.file_name)
         return book, 201
     
     def delete(self, id):
@@ -88,5 +92,12 @@ class BooksAPI(Resource):
         Deletes the record if exist and returns the data with response code 200 OK. 
         Otherwise 404 not found.
         """
-        self.books = [book for book in self.books if book["id"] != id]
-        return "{} is deleted.".format(id), 200
+        try:
+            self.json_handler.get_books_list().index(id)
+            self.json_handler.delete_element(id)
+            self.json_handler.write_json(self.file_name)
+
+            return "{} is deleted.".format(id), 200
+        except ValueError:
+            return "Id {} does not exist".format(id), 404
+
