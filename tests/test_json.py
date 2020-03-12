@@ -59,10 +59,11 @@ class JsonTestCase(unittest.TestCase):
 
         self.id_to_delete = "03"
         self.file_name = 'test_books.json'
+        self.new_file_name = 'new_test_books.json'
 
     def test_reading_json(self):
         json_handler = JSONHandler()
-        self.assertEqual(json_handler.read_json('../books.json'), self.json_data)
+        self.assertEqual(json_handler.read_json(self.file_name), self.json_data)
         self.assertEqual(json_handler.get_books_list(), self.json_data['books'])
 
     def test_appending_new_book_json(self):
@@ -74,8 +75,8 @@ class JsonTestCase(unittest.TestCase):
     def test_reading_new_book(self):
         json_handler = JSONHandler(self.json_data)
         self.assertTrue(json_handler.append_new_element(self.new_book))
-        self.assertTrue(json_handler.write_json(self.file_name))
-        self.assertEqual(self.json_data, json_handler.read_json(self.file_name))
+        self.assertTrue(json_handler.write_json(self.new_file_name))
+        self.assertEqual(self.json_data, json_handler.read_json(self.new_file_name))
 
     def test_deleting_book(self):
         json_handler = JSONHandler(self.json_data)

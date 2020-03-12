@@ -23,6 +23,10 @@ class BooksAPI(Resource):
         self.file_name = 'books.json'
         self.json_handler = JSONHandler()
 
+        json_data = self.json_handler.read_json(self.file_name)
+        self.file_name = 'new_books.json'
+        self.json_handler.write_json(self.file_name, json_data)
+
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("title", type=str, location='json')
         self.parser.add_argument("edition", type=str, default='Not given', location='json')

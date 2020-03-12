@@ -16,10 +16,13 @@ class JSONHandler(object):
 
         return self.json_data
 
-    def write_json(self, file_name):
+    def write_json(self, file_name, given_json_data=None):
         try:
             with open(file_name, 'w') as f:
-                json.dump(self.json_data, f)
+                if given_json_data is not None:
+                    json.dump(given_json_data, f)
+                else:
+                    json.dump(self.json_data, f)
 
             return True
         except:
