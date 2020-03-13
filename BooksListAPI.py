@@ -1,7 +1,9 @@
 # Written by Mateusz Rzeczyca
+# info@mateuszrzeczyca.pl
+# 13.03.2020
 
 from flask_restful import Resource, reqparse
-import json
+from JSONHandler import JSONHandler
 
 
 class BooksListAPI(Resource):
@@ -19,10 +21,11 @@ class BooksListAPI(Resource):
         Reads content of JSON file and save it to books variable, prepares
         object for handling requests
         """
-        with open('books.json', 'r') as f:
-            json_data = json.load(f)
+        self.json_handler = JSONHandler()
+        self.file_name = 'books_during_runtime.json'
 
-        self.books = json_data["books"]
+        if not self.json_handler.read_json('books.json'):
+            raise FileNotFoundError('Could not read books.json')
 
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("id", type=str, required=True,
@@ -39,8 +42,9 @@ class BooksListAPI(Resource):
         Searches requested id in list of books, and will return the data if found along with
         response code 200 OK. Otherwise 404 not found
         """
-        if self.books is not None:
-            return self.books, 200
+        books = self.json_handler.get_books_list()
+        if books is not None:
+            return books, 200
         else:
             return "Books not found", 404
 
@@ -51,7 +55,7 @@ class BooksListAPI(Resource):
         """
         args = self.parser.parse_args()
 
-        for book in self.books:
+        for book in self.json_handler.get_books_list():
             if args["id"] == book["id"]:
                 return "Id {} already exists".format(id), 400
 
@@ -62,7 +66,12 @@ class BooksListAPI(Resource):
             "author": args["author"]
         }
 
-        self.books.append(book)
+        if self.json_handler.append_new_element(book):
+            return "Cannot append new element to json_handler", 503
+
+        if self.json_handler.write_json(self.file_name):
+            return 'Cannot rewrite json file', 503
+
         return book, 201
 
     def put(self):
@@ -72,13 +81,6 @@ class BooksListAPI(Resource):
         """
         args = self.parser.parse_args()
 
-        for book in self.books:
-            if args["id"] == book["id"]:
-                book["title"] = args["title"]
-                book["edition"] = args["edition"]
-                book["author"] = args["author"]
-                return book, 200
-
         book = {
             "id": args["id"],
             "title": args["title"],
@@ -86,7 +88,18 @@ class BooksListAPI(Resource):
             "author": args["author"]
         }
 
-        self.books.append(book)
+        if self.json_handler.put_element(book):
+            if self.json_handler.write_json(self.file_name):
+                return 'Cannot rewrite json file', 503
+
+            return book, 200
+
+        if self.json_handler.append_new_element(book):
+            return "Cannot append new element to json_handler", 503
+
+        if self.json_handler.write_json(self.file_name):
+            return 'Cannot rewrite json file', 503
+
         return book, 201
 
     def delete(self):
@@ -95,5 +108,10 @@ class BooksListAPI(Resource):
         Otherwise 404 not found.
         """
         args = self.parser.parse_args()
-        self.books = [book for book in self.books if book["id"] != args["id"]]
-        return "{} is deleted.".format(id), 200
+        if self.json_handler.delete_element(args['id']):
+            if self.json_handler.write_json(self.file_name):
+                return 'Cannot rewrite json file', 503
+
+            return "{} is deleted.".format(id), 200
+
+        return "Id {} does not exist".format(id), 404

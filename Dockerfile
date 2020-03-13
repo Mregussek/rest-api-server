@@ -1,4 +1,6 @@
 # Written by Mateusz Rzeczyca
+# info@mateuszrzeczyca.pl
+# 13.03.2020
 
 FROM python:3
 

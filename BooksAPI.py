@@ -1,4 +1,6 @@
 # Written by Mateusz Rzeczyca
+# info@mateuszrzeczyca.pl
+# 13.03.2020
 
 from flask_restful import Resource, reqparse
 from JSONHandler import JSONHandler
