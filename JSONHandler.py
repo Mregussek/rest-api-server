@@ -11,10 +11,13 @@ class JSONHandler(object):
         self.json_data = json_data
 
     def read_json(self, file_name):
-        with open(file_name, 'r') as f:
-            self.json_data = json.load(f)
+        try:
+            with open(file_name, 'r') as f:
+                self.json_data = json.load(f)
 
-        return self.json_data
+            return True
+        except:
+            return False
 
     def write_json(self, file_name, given_json_data=None):
         try:
@@ -28,13 +31,22 @@ class JSONHandler(object):
         except:
             return False
 
-    def get_books_list(self):
-        return self.json_data['books']
-
     def append_new_element(self, new_book):
         try:
             self.books.append(new_book)
             self.json_data = {'books': self.books}
+
+            return True
+        except:
+            return False
+
+    def put_element(self, book_to_put):
+        try:
+            for book in self.get_books_list():
+                if book['id'] == book_to_put["id"]:
+                    book["title"] = book_to_put["title"]
+                    book["edition"] = book_to_put["edition"]
+                    book["author"] = book_to_put["author"]
 
             return True
         except:
@@ -49,3 +61,9 @@ class JSONHandler(object):
             return True
         except:
             return False
+
+    def get_json_data(self):
+        return self.json_data
+
+    def get_books_list(self):
+        return self.json_data['books']

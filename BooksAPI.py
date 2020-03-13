@@ -19,13 +19,11 @@ class BooksAPI(Resource):
         Reads content of JSON file and save it to books variable, prepares
         object for handling requests
         """
-
-        self.file_name = 'books.json'
         self.json_handler = JSONHandler()
+        self.file_name = 'books_during_runtime.json'
 
-        json_data = self.json_handler.read_json(self.file_name)
-        self.file_name = 'new_books.json'
-        self.json_handler.write_json(self.file_name, json_data)
+        if not self.json_handler.read_json('books.json'):
+            raise FileNotFoundError('Could not read books.json')
 
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("title", type=str, location='json')
@@ -37,8 +35,6 @@ class BooksAPI(Resource):
         Searches requested id in list of books, and will return the data if found along with 
         response code 200 OK. Otherwise 404 not found
         """
-        self.json_handler.read_json(self.file_name)
-
         for book in self.json_handler.get_books_list():
             if id == book["id"]:
                 return book, 200
@@ -50,7 +46,6 @@ class BooksAPI(Resource):
         Inserts new book data in list of books and returns inserted data with response code 201 created. 
         If record already exists it returns error code 400 bad request.
         """
-        self.json_handler.read_json(self.file_name)
         args = self.parser.parse_args()
 
         for book in self.json_handler.get_books_list():
@@ -64,8 +59,12 @@ class BooksAPI(Resource):
             "author": args["author"]
         }
 
-        self.json_handler.append_new_element(book)
-        self.json_handler.write_json(self.file_name)
+        if self.json_handler.append_new_element(book):
+            return "Cannot append new element to json_handler", 400
+
+        if self.json_handler.write_json(self.file_name):
+            return 'Cannot rewrite json file', 400
+
         return book, 201
 
     def put(self, id):
@@ -73,15 +72,7 @@ class BooksAPI(Resource):
         Overwrites record and returns data along with response code 200 OK. If record does not exist, 
         it creates the data and returns it with response code 201 created.
         """
-        self.json_handler.read_json(self.file_name)
         args = self.parser.parse_args()
-
-        for book in self.json_handler.get_books_list():
-            if id == book["id"]:
-                book["title"] = args["title"]
-                book["edition"] = args["edition"]
-                book["author"] = args["author"]
-                return book, 200
 
         book = {
             "id": id,
@@ -90,8 +81,18 @@ class BooksAPI(Resource):
             "author": args["author"]
         }
 
-        self.json_handler.append_new_element(book)
-        self.json_handler.write_json(self.file_name)
+        if self.json_handler.put_element(book):
+            if self.json_handler.write_json(self.file_name):
+                return 'Cannot rewrite json file', 400
+
+            return book, 200
+
+        if self.json_handler.append_new_element(book):
+            return "Cannot append new element to json_handler", 400
+
+        if self.json_handler.write_json(self.file_name):
+            return 'Cannot rewrite json file', 400
+
         return book, 201
     
     def delete(self, id):
@@ -99,14 +100,11 @@ class BooksAPI(Resource):
         Deletes the record if exist and returns the data with response code 200 OK. 
         Otherwise 404 not found.
         """
-        self.json_handler.read_json(self.file_name)
-
-        try:
-            self.json_handler.get_books_list().index(id)
-            self.json_handler.delete_element(id)
-            self.json_handler.write_json(self.file_name)
+        if self.json_handler.delete_element(id):
+            if self.json_handler.write_json(self.file_name):
+                return 'Cannot rewrite json file', 400
 
             return "{} is deleted.".format(id), 200
-        except ValueError:
-            return "Id {} does not exist".format(id), 404
+
+        return "Id {} does not exist".format(id), 404
 
