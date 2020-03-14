@@ -64,8 +64,10 @@ class BooksAPI(Resource):
         if self.json_handler.append_new_element(book):
             return "Cannot append new element to json_handler", 503
 
-        if self.json_handler.write_json(self.file_name):
-            return 'Cannot rewrite json file', 503
+        '''
+        TODO: sudo priviliges is not a answer, why?
+        I have no idea why it cannot write changes to json file
+        '''
 
         return book, 201
 
@@ -92,8 +94,10 @@ class BooksAPI(Resource):
         if self.json_handler.append_new_element(book):
             return "Cannot append new element to json_handler", 503
 
-        if self.json_handler.write_json(self.file_name):
-            return 'Cannot rewrite json file', 503
+        '''
+        TODO: sudo priviliges is not a answer, why?
+        I have no idea why it cannot write changes to json file
+        '''
 
         return book, 201
     
@@ -103,8 +107,10 @@ class BooksAPI(Resource):
         Otherwise 404 not found.
         """
         if self.json_handler.delete_element(id):
-            if self.json_handler.write_json(self.file_name):
-                return 'Cannot rewrite json file', 503
+            '''
+            TODO: sudo priviliges is not a answer, why?
+            I have no idea why it cannot write changes to json file
+            '''
 
             return "{} is deleted.".format(id), 200
 

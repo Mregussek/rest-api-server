@@ -69,9 +69,10 @@ class BooksListAPI(Resource):
         if self.json_handler.append_new_element(book):
             return "Cannot append new element to json_handler", 503
 
-        if self.json_handler.write_json(self.file_name):
-            return 'Cannot rewrite json file', 503
-
+        '''
+        TODO: sudo priviliges is not a answer, why?
+        I have no idea why it cannot write changes to json file
+        '''
         return book, 201
 
     def put(self):
@@ -89,16 +90,20 @@ class BooksListAPI(Resource):
         }
 
         if self.json_handler.put_element(book):
-            if self.json_handler.write_json(self.file_name):
-                return 'Cannot rewrite json file', 503
+            '''
+            TODO: sudo priviliges is not a answer, why?
+            I have no idea why it cannot write changes to json file
+            '''
 
             return book, 200
 
         if self.json_handler.append_new_element(book):
             return "Cannot append new element to json_handler", 503
 
-        if self.json_handler.write_json(self.file_name):
-            return 'Cannot rewrite json file', 503
+        '''
+        TODO: sudo priviliges is not a answer, why?
+        I have no idea why it cannot write changes to json file
+        '''
 
         return book, 201
 
@@ -109,9 +114,11 @@ class BooksListAPI(Resource):
         """
         args = self.parser.parse_args()
         if self.json_handler.delete_element(args['id']):
-            if self.json_handler.write_json(self.file_name):
-                return 'Cannot rewrite json file', 503
+            '''
+            TODO: sudo priviliges is not a answer, why?
+            I have no idea why it cannot write changes to json file
+            '''
 
-            return "{} is deleted.".format(id), 200
+            return "Book with {} id is deleted.".format(args['id']), 200
 
-        return "Id {} does not exist".format(id), 404
+        return "Id {} does not exist".format(args['id']), 404
