@@ -70,7 +70,7 @@ python server.py
 For this I have prepared *Dockerfile*. Firstly you have to build application:
 
 ```bash
-sudo docker build server .
+sudo docker build -t server .
 ```
 
 and then run it:
